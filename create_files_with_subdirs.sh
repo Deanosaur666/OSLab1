@@ -5,13 +5,15 @@ echo "[$(date)] Script started" > "script.log"
 
 # language names to write to files
 langs=("Assembly" "Autocode" "FORTRAN" "LISP" "COBOL" "ALGOL" "Smalltalk" "C" "SML" "Perl")
-# last two digits for files tuser501.txt to tuser510.txt
-twodigits=("01" "02" "03" "04" "05" "06" "07" "08" "09" "10")
-
 
 # make main directory
 maindir="$(date)"
 mkdir "$maindir"
+if [ $? -ne 0 ]; then
+	echo "Error: Failed to create directory"
+	echo "[$(date)] Error: Failed to create directory" >> "script.log"
+	exit 1
+fi
 echo "[$(date)] Main directory created" >> "script.log"
 
 # for each subdirectory
@@ -19,17 +21,27 @@ for i in {101..110}
 do
 	# make subdirectory
 	subdir="file"$i
-       	mkdir "$maindir/$subdir"
+	mkdir "$maindir/$subdir"
+	if [ $? -ne 0 ]; then
+		echo "Error: Failed to create subdirectory"
+		echo "[$(date)] Error: Failed to create subdirectory" >> "script.log"
+		exit 1
+	fi
 	echo "[$(date)] Subdirectory $subdir created" >> "script.log"
 	# for each file
-	i=0
-	for val in ${langs[@]}
+	l=0
+	for j in {501..510}
 	do
-		filename="$subdir/tuser5"${twodigits[i]}".txt"
+		filename="$subdir/tuser"$j".txt"
 		touch "$maindir/$filename"
-		echo "${langs[i]}" > "$maindir/$filename"
+		if [ $? -ne 0 ]; then
+			echo "Error: Failed to create file"
+			echo "[$(date)] Error: Failed to create file" >> "script.log"
+			exit 1
+		fi
+		echo "${langs[l]}" > "$maindir/$filename"
 		echo "[$(date)] File $filename created" >> "script.log"
-		let i=$i+1
+		let l=$l+1
 	done
 done
 
